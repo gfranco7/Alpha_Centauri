@@ -77,10 +77,10 @@ public class NotificacionImplementServ {
         notification.setId(dto.getId());
 
         User giver = userRepository.findById(dto.getIdGiver())
-                .orElseThrow(() -> new IllegalArgumentException("Usuario not found"));
+                .orElseThrow(() -> new IllegalArgumentException("User not found"));
         notification.setGiver(giver);
         User receiver = userRepository.findById(dto.getIdReceiver())
-                .orElseThrow(() -> new IllegalArgumentException("Usuario not found"));
+                .orElseThrow(() -> new IllegalArgumentException("User not found"));
         notification.setReceiver(receiver);
 
         notification.setDate(dto.getDate());
