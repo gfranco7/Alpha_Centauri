@@ -1,13 +1,10 @@
 package com.campus.alphacentauri.Publicacion.domain;
-
+import com.campus.alphacentauri.Interaccion.domain.Interaccion;
 import com.campus.alphacentauri.usuario.domain.User;
-import jakarta.persistence.Entity;
-import jakarta.persistence.FetchType;
-import jakarta.persistence.Id;
-import jakarta.persistence.JoinColumn;
-import jakarta.persistence.ManyToOne;
+import jakarta.persistence.*;
 
 import java.time.LocalDateTime;
+import java.util.List;
 
 @Entity
 public class Publicacion {
@@ -23,8 +20,8 @@ public class Publicacion {
 
     private LocalDateTime date;
 
-    /*@OneToMany(mappedBy = "publication", cascade = CascadeType.ALL, orphanRemoval = true)
-    private List<Interation> interactions; */
+    @OneToMany(mappedBy = "publication", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<Interaccion> interactions;
 
     public Publicacion() {
     }
@@ -84,13 +81,13 @@ public class Publicacion {
         this.date = date;
     }
 
-   /* public List<Interation> getInterations() {
+   public List<Interaccion> getInterations() {
         return interactions;
     }
 
-    public void setInterations(List<Interation> interactions) {
+    public void setInterations(List<Interaccion> interactions) {
         this.interactions = interactions;
-    } */
+    }
 
     public User getPublisher() {
         return publisher;

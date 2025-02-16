@@ -17,7 +17,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 @Service
-public class SeguimientoImplementServ implements SeguimientoService {
+public class SeguimientoImplementServ {
 
     private final SeguimientoRepository seguimientoRepository;
     private final UserRepository userRepository;
@@ -32,21 +32,18 @@ public class SeguimientoImplementServ implements SeguimientoService {
 
 
 
-    @Override
     public List<SeguimientoDTO> findAll() {
         return seguimientoRepository.findAll().stream()
                 .map(this::convertToDTO)
                 .collect(Collectors.toList());
     }
 
-    @Override
     public Optional<SeguimientoDTO> findById(Long id) {
         return seguimientoRepository.findById(id)
                 .map(this::convertToDTO);
 
     }
 
-    @Override
     public SeguimientoDTO save(SeguimientoDTO followDTO) {
         return null;
     }
@@ -66,12 +63,17 @@ public class SeguimientoImplementServ implements SeguimientoService {
     } */
 
     @Transactional
-    @Override
     public void unfollow(Long followerId, Long followingId) {
-        seguimientoRepository.deleteByFollower_IdAndFollowing_Id(followerId, followingId);
+        // Buscar las entidades follower y following por sus ID
+        User follower = userRepository.findById(followerId)
+                .orElseThrow(() -> new RuntimeException("Follower not found"));
+        User following = userRepository.findById(followingId)
+                .orElseThrow(() -> new RuntimeException("Following not found"));
+
+        // Eliminar el seguimiento (dejar de seguir)
+        seguimientoRepository.deleteByFollowerAndFollowing(follower, following);
     }
 
-    @Override
     public void deleteById(Long id) {
         seguimientoRepository.deleteById(id);
     }

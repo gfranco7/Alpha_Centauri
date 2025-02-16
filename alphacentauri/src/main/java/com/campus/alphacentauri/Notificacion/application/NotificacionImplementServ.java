@@ -1,34 +1,33 @@
 package com.campus.alphacentauri.Notificacion.application;
 
-import com.campus.alphacentauri.Notificacion.domain.NotificacionDTO;
-import com.campus.alphacentauri.Notificacion.domain.Notificacion;
-import com.campus.alphacentauri.Notificacion.domain.NotificacionRepository;
-import com.campus.alphacentauri.usuario.domain.User;
-import com.campus.alphacentauri.usuario.domain.UserRepository;
-import jakarta.transaction.Transactional;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
-
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+
+import com.campus.alphacentauri.Notificacion.domain.Notificacion;
+import com.campus.alphacentauri.Notificacion.domain.NotificacionDTO;
+import com.campus.alphacentauri.Notificacion.domain.NotificacionRepository;
+import com.campus.alphacentauri.usuario.domain.User;
+import com.campus.alphacentauri.usuario.domain.UserRepository;
+
+import jakarta.transaction.Transactional;
+
 @Service
 public class NotificacionImplementServ {
 
-    private final NotificacionRepository notificacionRepository;
-    private final UserRepository userRepository;
-
     @Autowired
-    public NotificacionImplementServ(NotificacionRepository notificationRepository, UserRepository userRepository) {
-        this.notificacionRepository = notificationRepository;
-        this.userRepository = userRepository;
-    }
+    private NotificacionRepository notificacionRepository;
+    @Autowired
+    private UserRepository userRepository;
+
 
 
     public List<NotificacionDTO> findNotificationsByUser(Long id) {
-        return notificacionRepository.findNotificationsByUserId(id).stream()
+        return notificacionRepository.findNotificationsUserId(id).stream()
                 .map(this::toDTO)
                 .collect(Collectors.toList());
     }

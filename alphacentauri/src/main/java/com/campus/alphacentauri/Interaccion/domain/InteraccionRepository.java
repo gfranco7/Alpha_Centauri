@@ -20,7 +20,7 @@ public interface InteraccionRepository {
 
     List<Interaccion> findByPublicationId(Long publicationId);
 
-    @Query("SELECT i FROM Interation i WHERE " +
+    @Query("SELECT i FROM Interaccion i WHERE " +
             "i.userGivingInteration.id = :userId AND " +
             "i.publication.id = :postId AND " +
             "i.typeInteration.id = :typeId")

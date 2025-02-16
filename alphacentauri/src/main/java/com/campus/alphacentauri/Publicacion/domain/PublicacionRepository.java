@@ -15,10 +15,8 @@ public interface PublicacionRepository {
 
     void deleteById(Long id);
 
-    @Query("select p from Publication p where p.publisher.id = :id")
+    @Query("select p from Publicacion p where p.publisher.id = :id")
     List<Publicacion> findByUserId(Long id);
 
 
-
-//    Publication findBy(String publi);
 }

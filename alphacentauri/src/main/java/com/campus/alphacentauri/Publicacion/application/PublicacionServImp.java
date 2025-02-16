@@ -5,7 +5,6 @@ import com.campus.alphacentauri.Interaccion.domain.Interaccion;
 import com.campus.alphacentauri.Interaccion.domain.InteraccionDTO;
 import com.campus.alphacentauri.Interaccion.domain.InteraccionRepository;
 import com.campus.alphacentauri.Notificacion.application.NotificacionImplementServ;
-import com.campus.alphacentauri.Notificacion.application.NotificacionService;
 import com.campus.alphacentauri.Notificacion.domain.NotificacionDTO;
 import com.campus.alphacentauri.Publicacion.domain.Publicacion;
 import com.campus.alphacentauri.Publicacion.domain.PublicacionDTO;
@@ -21,19 +20,14 @@ import org.springframework.transaction.annotation.Transactional;
 
 @Service
 public class PublicacionServImp implements PublicacionService {
-
-    private final PublicacionRepository publicationRepository;
-    private final UserRepository userRepository;
-    private final InteraccionRepository interationRepository;
+    @Autowired
+    private PublicacionRepository publicationRepository;
+    @Autowired
+    private UserRepository userRepository;
+    @Autowired
+    private InteraccionRepository interationRepository;
     @Autowired
     private NotificacionImplementServ notificationService;
-
-    @Autowired
-    public PublicacionServImp(PublicacionRepository publicationRepository, UserRepository userRepository, InteraccionRepository interationRepository) {
-        this.publicationRepository = publicationRepository;
-        this.userRepository = userRepository;
-        this.interationRepository = interationRepository;
-    }
 
     @Override
     public List<PublicacionDTO> findAll() {

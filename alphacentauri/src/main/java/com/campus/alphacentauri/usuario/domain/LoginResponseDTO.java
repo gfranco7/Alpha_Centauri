@@ -11,11 +11,21 @@ public class LoginResponseDTO {
     private String username;
     private String photo;
     private String bio;
+    private List<Long> publications;
+    private List<Long> followersIds;
+    private List<Long> followingIds;
 
     public String getToken() {
         return token;
     }
 
+    public List<Long> getPublications() {
+        return publications;
+    }
+
+    public void setPublications(List<Long> publications) {
+        this.publications = publications;
+    }
 
     public void setToken(String token) {
         this.token = token;
@@ -77,4 +87,19 @@ public class LoginResponseDTO {
         this.bio = bio;
     }
 
+    public List<Long> getFollowersIds() {
+        return followersIds;
+    }
+
+    public void setFollowersIds(List<Long> followersIds) {
+        this.followersIds = followersIds;
+    }
+
+    public List<Long> getFollowingIds() {
+        return followingIds;
+    }
+
+    public void setFollowingIds(List<Long> followingIds) {
+        this.followingIds = followingIds;
+    }
 }

@@ -46,6 +46,22 @@ public class LoginController {
             responseDTO.setLastname(user.getLastname());
             responseDTO.setBio(user.getBio());
 
+            List<Long> publications = user.getPublications().stream()
+                    .map(publication -> publication.getId())
+                    .collect(Collectors.toList());
+
+            List<Long> followersIds = user.getFollowers().stream()
+                    .map(follow -> follow.getFollowing().getId())
+                    .collect(Collectors.toList());
+
+            List<Long> followingIds = user.getFollowing().stream()
+                    .map(follow -> follow.getFollower().getId())
+                    .collect(Collectors.toList());
+
+            responseDTO.setFollowersIds(followersIds);
+            responseDTO.setFollowingIds(followingIds);
+            responseDTO.setPublications(publications);
+
             return ResponseEntity.ok(responseDTO);
         }
 

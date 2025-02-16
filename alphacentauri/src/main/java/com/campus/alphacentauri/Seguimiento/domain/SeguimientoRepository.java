@@ -1,5 +1,7 @@
 package com.campus.alphacentauri.Seguimiento.domain;
 
+import com.campus.alphacentauri.usuario.domain.User;
+
 import java.util.List;
 import java.util.Optional;
 
@@ -17,5 +19,6 @@ public interface SeguimientoRepository {
 
     void deleteByFollower_IdAndFollowing_Id(Long followerId, Long followingId);
 
-    String getUsernameFollowedId();
+    void deleteByFollowerAndFollowing(User follower, User following);
+
 }
