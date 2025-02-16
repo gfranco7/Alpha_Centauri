@@ -1,21 +1,34 @@
 package com.campus.alphacentauri.usuario.application;
 
+
+import com.campus.alphacentauri.Seguimiento.domain.Seguimiento;
+import com.campus.alphacentauri.Seguimiento.domain.SeguimientoRepository;
+import com.campus.alphacentauri.Publicacion.domain.Publicacion;
+import com.campus.alphacentauri.Publicacion.domain.PublicacionRepository;
 import com.campus.alphacentauri.usuario.domain.LoginResponseDTO;
 import com.campus.alphacentauri.usuario.domain.RegisterUserDTO;
 import com.campus.alphacentauri.usuario.domain.User;
+import com.campus.alphacentauri.usuario.domain.UserEditDTO;
+import com.campus.alphacentauri.usuario.domain.UserProfileDTO;
 import com.campus.alphacentauri.usuario.domain.UserRepository;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.crypto.password.PasswordEncoder;
-import org.springframework.stereotype.Service;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.stereotype.Service;
 
 @Service
 public class UserServiceImpl {
 
     private final UserRepository userRepository;
     private PasswordEncoder passwordEncoder;
+    @Autowired
+    private PublicacionRepository publicationRepo;
+
+    @Autowired
+    private SeguimientoRepository followRepository;
 
     @Autowired
     public UserServiceImpl(UserRepository userRepository, PasswordEncoder passwordEncoder) {
@@ -86,4 +99,59 @@ public class UserServiceImpl {
         return userRepository.findById(userId)
                 .orElseThrow(() -> new RuntimeException("Usuario no encontrado"));
     }
+
+    public UserEditDTO saveEditProf(UserEditDTO userEditDTO) {
+        User user = convertToEntity(userEditDTO);
+        User savedUser = userRepository.save(user);
+        return convertToDTO(savedUser);
+    }
+
+    public UserEditDTO convertToDTO(User user) {
+        UserEditDTO dto = new UserEditDTO();
+        dto.setId(user.getId());
+        dto.setName(user.getName());
+        dto.setLastname(user.getLastname());
+        dto.setUsername(user.getUsername());
+        dto.setPhoto(user.getPhoto());
+        dto.setBio(user.getBio());
+
+        List<Long> publicationIds = user.getPublications().stream()
+                .map(Publicacion::getId)
+                .collect(Collectors.toList());
+        dto.setPublications(publicationIds);
+
+        List<Long> followerIds = user.getFollowers().stream()
+                .map(follow -> follow.getFollower().getId())
+                .collect(Collectors.toList());
+        dto.setFollowersIds(followerIds);
+
+        List<Long> followingIds = user.getFollowing().stream()
+                .map(follow -> follow.getFollowing().getId())
+                .collect(Collectors.toList());
+        dto.setFollowingIds(followingIds);
+
+        return dto;
+    }
+
+    public User convertToEntity(UserEditDTO dto) {
+        User user = new User();
+        user.setId(dto.getId());
+        user.setName(dto.getName());
+        user.setLastname(dto.getLastname());
+        user.setUsername(dto.getUsername());
+        user.setPhoto(dto.getPhoto());
+        user.setBio(dto.getBio());
+
+        if (dto.getPublications() != null) {
+            List<Publicacion> publications = dto.getPublications().stream()
+                    .map(publicationRepo::findById)
+                    .filter(Optional::isPresent)
+                    .map(Optional::get)
+                    .collect(Collectors.toList());
+            user.setPublications(publications);
+        }
+
+        return user;
+    }
+
 }
