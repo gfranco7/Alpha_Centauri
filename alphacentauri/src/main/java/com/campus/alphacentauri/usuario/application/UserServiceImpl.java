@@ -150,7 +150,6 @@ public class UserServiceImpl {
                     .collect(Collectors.toList());
             user.setPublications(publications);
         }
-
         return user;
     }
 
