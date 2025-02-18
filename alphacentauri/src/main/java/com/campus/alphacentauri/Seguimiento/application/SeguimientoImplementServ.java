@@ -4,9 +4,8 @@ package com.campus.alphacentauri.Seguimiento.application;
 import com.campus.alphacentauri.Seguimiento.domain.Seguimiento;
 import com.campus.alphacentauri.Seguimiento.domain.SeguimientoDTO;
 import com.campus.alphacentauri.Seguimiento.domain.SeguimientoRepository;
-//import com.campus.alphacentauri.notification.application.NotificationServiceImpl;
-//import com.campus.alphacentauri.notification.domain.NotificationDTO;
-//import com.campus.alphacentauri.notification.domain.NotificationRepository;
+import com.campus.alphacentauri.Notificacion.application.NotificacionImplementServ;
+import com.campus.alphacentauri.Notificacion.domain.NotificacionDTO;
 import com.campus.alphacentauri.usuario.domain.User;
 import com.campus.alphacentauri.usuario.domain.UserRepository;
 import java.util.List;
@@ -21,12 +20,13 @@ public class SeguimientoImplementServ {
 
     private final SeguimientoRepository seguimientoRepository;
     private final UserRepository userRepository;
-
+    @Autowired
+    private NotificacionImplementServ NotificacionService;
 
 
     @Autowired
-    public SeguimientoImplementServ(SeguimientoRepository followRepository, UserRepository userRepository/*,NotificationServiceImpl notificationService*/) {
-        this.seguimientoRepository = followRepository;
+    public SeguimientoImplementServ(SeguimientoRepository seguimientoRepository, UserRepository userRepository) {
+        this.seguimientoRepository = seguimientoRepository;
         this.userRepository = userRepository;
     }
 
@@ -44,34 +44,30 @@ public class SeguimientoImplementServ {
 
     }
 
-    public SeguimientoDTO save(SeguimientoDTO followDTO) {
-        return null;
-    }
 
-    /*@Override
     public SeguimientoDTO save(SeguimientoDTO SeguimientoDTO) {
         Seguimiento seguimiento = convertToEntity(SeguimientoDTO);
-        Seguimiento savedFollow = SeguimientoRepository.save(seguimiento);
+        Seguimiento savedFollow = seguimientoRepository.save(seguimiento);
 
-        NotificationDTO notificationDTO = new NotificationDTO();
-        notificationDTO.setType("Follow");
-        notificationDTO.setContent(follow.getFollowing().getUsername() + " started following you...");
-        notificationDTO.setIdGiver(follow.getFollowing().getId());
-        notificationDTO.setIdReceiver(follow.getFollower().getId());
-        notificationService.createNotification(notificationDTO);
+        NotificacionDTO NotificacionDTO = new NotificacionDTO();
+        NotificacionDTO.setType("Follow");
+        NotificacionDTO.setContent(seguimiento.getFollowing().getUsername() + " started seguimientoing you...");
+        NotificacionDTO.setIdGiver(seguimiento.getFollowing().getId());
+        NotificacionDTO.setIdReceiver(seguimiento.getFollower().getId());
+        NotificacionService.createNotification(NotificacionDTO);
         return convertToDTO(savedFollow);
-    } */
+    }
 
     @Transactional
-    public void unfollow(Long followerId, Long followingId) {
-        // Buscar las entidades follower y following por sus ID
-        User follower = userRepository.findById(followerId)
+    public void unseguimiento(Long seguimientoerId, Long seguimientoingId) {
+        // Buscar las entidades seguimientoer y seguimientoing por sus ID
+        User seguimientoer = userRepository.findById(seguimientoerId)
                 .orElseThrow(() -> new RuntimeException("Follower not found"));
-        User following = userRepository.findById(followingId)
+        User seguimientoing = userRepository.findById(seguimientoingId)
                 .orElseThrow(() -> new RuntimeException("Following not found"));
 
         // Eliminar el seguimiento (dejar de seguir)
-        seguimientoRepository.deleteByFollowerAndFollowing(follower, following);
+        seguimientoRepository.deleteByFollowerAndFollowing(seguimientoer, seguimientoing);
     }
 
     public void deleteById(Long id) {
@@ -100,7 +96,7 @@ public class SeguimientoImplementServ {
 
         seguimiento.setDate(seguimientoDTO.getDate());
         if (seguimientoDTO.getUsernameFollowedId().equals(seguimientoDTO.getUsernameFollowingId())) {
-            throw new IllegalArgumentException("Can't follow yourself back.");
+            throw new IllegalArgumentException("Can't seguimiento yourself back.");
         }
 
         return seguimiento;

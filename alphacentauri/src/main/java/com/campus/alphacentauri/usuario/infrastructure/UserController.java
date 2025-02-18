@@ -46,27 +46,20 @@ public class UserController {
                 .collect(Collectors.toList());
     }
 
-    @PatchMapping(value = "/{userId}/photo", consumes = "multipart/form-data")
+    @PatchMapping(value = "/{userId}/photo", consumes = "application/json")
     public ResponseEntity<?> updateUserPhoto(@PathVariable Long userId,
-                                             @RequestParam("photo") MultipartFile photo) {
+                                             @RequestBody String photo) {
         try {
-            String uploadDir = "uploads/";
-            Path uploadPath = Paths.get(uploadDir);
-            if (!Files.exists(uploadPath)) {
-                Files.createDirectories(uploadPath);
-            }
-
-            String fileName = System.currentTimeMillis() + "_" + photo.getOriginalFilename();
-            Path filePath = uploadPath.resolve(fileName);
-
-            Files.copy(photo.getInputStream(), filePath);
+            // Remove surrounding quotes if necessary (optional step)
+            photo = photo.replace("\"", "").trim();
 
             Optional<User> optionalUser = userRepository.findById(userId);
             if (!optionalUser.isPresent()) {
                 return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Usuario no encontrado");
             }
             User user = optionalUser.get();
-            user.setPhoto(fileName);
+            user.setPhoto(photo);  // Guardamos solo el string que representa la URL de la imagen
+
             userRepository.save(user);
 
             Map<String, Object> response = new HashMap<>();
@@ -74,11 +67,13 @@ public class UserController {
             response.put("photo", user.getPhoto());
 
             return ResponseEntity.ok(response);
-        } catch (IOException ex) {
+        } catch (Exception ex) {
             ex.printStackTrace();
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Error al subir la imagen");
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Error al actualizar la foto");
         }
     }
+
+
 
     @PutMapping("/edit/{userId}")
     public LoginResponseDTO editUser(@PathVariable long userId, @RequestBody LoginResponseDTO loginResponseDTO) {

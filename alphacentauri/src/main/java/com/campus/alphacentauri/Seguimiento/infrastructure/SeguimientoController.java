@@ -48,7 +48,7 @@ public class SeguimientoController {
     public ResponseEntity<Void> unfollow(
             @RequestParam Long followerId,
             @RequestParam Long followingId) {
-        seguimientoImplementServ.unfollow(followerId, followingId);
+        seguimientoImplementServ.unseguimiento(followerId, followingId);
         return ResponseEntity.noContent().build();
     }
 

@@ -2,21 +2,14 @@ package com.campus.alphacentauri.Publicacion.infrastructure;
 
 import com.campus.alphacentauri.Publicacion.domain.PublicacionDTO;
 import com.campus.alphacentauri.Publicacion.application.PublicacionServImp;
-import java.io.IOException;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.Paths;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.core.io.Resource;
-import org.springframework.core.io.UrlResource;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.multipart.MultipartFile;
 
 @RestController
 @RequestMapping("/api/publications")
@@ -35,31 +28,13 @@ public class PublicacionController {
         return publicationServiceImpl.findAll();
     }
 
-    @GetMapping("/images/{filename}")
-    public ResponseEntity<Resource> getImage(@PathVariable String filename) {
-        try {
-            Path filePath = Paths.get("uploads/").resolve(filename).normalize();
-            Resource resource = new UrlResource(filePath.toUri());
-
-            if (resource.exists() || resource.isReadable()) {
-                return ResponseEntity.ok()
-                        .header("Content-Type", Files.probeContentType(filePath))
-                        .body(resource);
-            } else {
-                return ResponseEntity.notFound().build();
-            }
-        } catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
-        }
-    }
-
     @GetMapping("/{id}")
-    public Optional findById(@PathVariable Long id){
+    public Optional<PublicacionDTO> findById(@PathVariable Long id) {
         return publicationServiceImpl.findById(id);
     }
 
     @GetMapping("/user/{id}")
-    public List<PublicacionDTO> findByUserId(@PathVariable Long id){
+    public List<PublicacionDTO> findByUserId(@PathVariable Long id) {
         return publicationServiceImpl.findByUserId(id);
     }
 
@@ -71,39 +46,20 @@ public class PublicacionController {
     @PostMapping(value = "/upload", consumes = "multipart/form-data")
     public ResponseEntity<String> createPublicationWithImage(
             @RequestParam("description") String description,
-            @RequestParam("photo") MultipartFile photo,
+            @RequestParam("photo") String photoUrl, // Cambio aquí: recibimos la URL como texto
             @RequestParam("username") String username,
             @RequestParam("publisherId") Long publisherId) {
 
-        try {
-            String uploadDir = "uploads/";
-            Path uploadPath = Paths.get(uploadDir);
+        PublicacionDTO publicationDTO = new PublicacionDTO();
+        publicationDTO.setDescription(description);
+        publicationDTO.setPhoto(photoUrl);
+        publicationDTO.setUsername(username);
+        publicationDTO.setDate(LocalDateTime.now());
+        publicationDTO.setPublisherId(publisherId);
 
-            if (!Files.exists(uploadPath)) {
-                Files.createDirectories(uploadPath);
-            }
+        publicationServiceImpl.save(publicationDTO);
 
-            String fileName = System.currentTimeMillis() + "_" + photo.getOriginalFilename();
-            Path filePath = uploadPath.resolve(fileName);
-
-            Files.copy(photo.getInputStream(), filePath);
-
-            PublicacionDTO publicationDTO = new PublicacionDTO(
-                    null,
-                    description,
-                    fileName,
-                    username,
-                    LocalDateTime.now(),
-                    publisherId
-            );
-
-            publicationServiceImpl.save(publicationDTO);
-
-            return ResponseEntity.status(HttpStatus.CREATED).body("Publicación creada exitosamente");
-        } catch (IOException e) {
-            e.printStackTrace();
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Error al guardar la imagen");
-        }
+        return ResponseEntity.status(HttpStatus.CREATED).body("Publicación creada exitosamente");
     }
 
     @DeleteMapping("/{id}")
@@ -124,13 +80,11 @@ public class PublicacionController {
             @RequestBody Map<String, String> payload) {
 
         String newDescription = payload.get("description");
-        if(newDescription == null || newDescription.trim().isEmpty()){
+        if (newDescription == null || newDescription.trim().isEmpty()) {
             return ResponseEntity.badRequest().build();
         }
 
         PublicacionDTO updatedPublication = publicationServiceImpl.updateDescription(id, newDescription);
         return ResponseEntity.ok(updatedPublication);
     }
-
-
 }

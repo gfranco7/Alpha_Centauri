@@ -43,13 +43,14 @@ public class PublicacionServImp implements PublicacionService {
 
     }
 
-    @Override
     public PublicacionDTO save(PublicacionDTO publicationDTO) {
         Publicacion publication = convertToEntity(publicationDTO);
+
+        // Se guarda la publicación sin asignar el ID manualmente
         Publicacion savedPublication = publicationRepository.save(publication);
 
-
-        savedPublication.getPublisher().getFollowers().stream().map(follower ->
+        // Crear notificación para los seguidores
+        savedPublication.getPublisher().getFollowers().forEach(follower ->
                 notificationService.createNotification(
                         new NotificacionDTO(
                                 "Publication",
@@ -62,6 +63,7 @@ public class PublicacionServImp implements PublicacionService {
 
         return convertToDTO(savedPublication);
     }
+
     @Override
     @Transactional
     public PublicacionDTO updateDescription(Long id, String description) {
@@ -111,14 +113,17 @@ public class PublicacionServImp implements PublicacionService {
 
     private Publicacion convertToEntity(PublicacionDTO publicationDTO) {
         Publicacion publication = new Publicacion();
-        publication.setId(publicationDTO.getId());
         publication.setDescription(publicationDTO.getDescription());
         publication.setPhoto(publicationDTO.getPhoto());
         publication.setDate(publicationDTO.getDate());
+
+        // Asegurémonos de usar el campo correcto para asignar el publisher
         User user = userRepository.findByUsername(publicationDTO.getUsername())
-                .orElseThrow(() -> new IllegalArgumentException("user not found"));;
-        publication.setUser(user);
+                .orElseThrow(() -> new IllegalArgumentException("User not found"));
+        publication.setPublisher(user);  // Este campo debe ser 'publisher', no 'user'
+
         return publication;
     }
+
 
 }

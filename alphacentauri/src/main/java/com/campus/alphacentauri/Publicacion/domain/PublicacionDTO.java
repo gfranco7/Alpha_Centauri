@@ -15,7 +15,7 @@ public class PublicacionDTO {
     private String username;
     private LocalDateTime date;
     private Long publisherId;
-    //private List<InterationDTO> interations;
+    private List<InteraccionDTO> interations;
 
     public PublicacionDTO(Long id, String description, String photo, String username, LocalDateTime date, Long publisherId, List<InteraccionDTO> interations) {
         this.id = id;
@@ -24,7 +24,7 @@ public class PublicacionDTO {
         this.username = username;
         this.date = date;
         this.publisherId = publisherId;
-        //this.interations = interations;
+        this.interations = interations;
     }
 
     public PublicacionDTO(Long id, String description, String photo, String username, LocalDateTime date, Long publisherId) {
@@ -46,13 +46,13 @@ public class PublicacionDTO {
         this.date = date;
     }
 
-   /* public List<InterationDTO> getInterations() {
+   public List<InteraccionDTO> getInterations() {
         return interations;
     }
 
-    public void setInterations(List<InterationDTO> interations) {
+    public void setInterations(List<InteraccionDTO> interations) {
         this.interations = interations;
-    }*/
+    }
 
     public Long getPublisherId() {
         return publisherId;
