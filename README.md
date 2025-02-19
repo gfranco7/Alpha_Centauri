@@ -98,6 +98,7 @@ Link to frontend repo: (https://github.com/gfranco7/Fronted_AlphaCentauri.git)
 🌍 Live Deployment
 Experience Alpha Centauri now!
 👉 Live Demo
+https://drive.google.com/drive/folders/1P-Sdjdy_O-96McbePgj3ncdRfcMsAjcs?usp=sharing
 
 | Environment | URL | Status |
 |-------------|-----|--------|
