@@ -1,4 +1,4 @@
-# 🌟 Alpha Centauri - Your Social Multiverse 🌟
+# 🪐 Alpha Centauri - Your Social Multiverse 🪐
 
 [![React](https://img.shields.io/badge/React-18.2.0-blue?logo=react)](https://reactjs.org/)  
 [![Spring Boot](https://img.shields.io/badge/Spring%20Boot-3.1.5-green?logo=spring)](https://spring.io/)  
@@ -6,6 +6,8 @@
 
 **Connect • Share • Inspire**  
 A modern social network built with cutting-edge technologies to bring people closer. ✨
+
+![image](https://github.com/user-attachments/assets/e39f0e7a-833d-4f5d-9de9-41698fde71ef)
 
 ---
 
