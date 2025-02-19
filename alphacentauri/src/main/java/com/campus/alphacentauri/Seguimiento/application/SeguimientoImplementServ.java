@@ -51,7 +51,7 @@ public class SeguimientoImplementServ {
 
         NotificacionDTO NotificacionDTO = new NotificacionDTO();
         NotificacionDTO.setType("Follow");
-        NotificacionDTO.setContent(seguimiento.getFollowing().getUsername() + " started seguimientoing you...");
+        NotificacionDTO.setContent(seguimiento.getFollowing().getUsername() + " started following you...");
         NotificacionDTO.setIdGiver(seguimiento.getFollowing().getId());
         NotificacionDTO.setIdReceiver(seguimiento.getFollower().getId());
         NotificacionService.createNotification(NotificacionDTO);

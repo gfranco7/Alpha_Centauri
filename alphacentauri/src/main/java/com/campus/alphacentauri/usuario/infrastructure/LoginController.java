@@ -9,6 +9,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -66,5 +67,43 @@ public class LoginController {
         }
 
         return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
+    }
+
+    // Nuevo endpoint para refrescar la información del usuario usando el email
+    @PostMapping(value = "/api/refreshUser", consumes = "text/plain")
+    public ResponseEntity<?> refreshUser(@RequestBody String email) {
+
+        User user = userService.findByEmail(email);
+        if (user == null) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Usuario no encontrado");
+        }
+
+
+        LoginResponseDTO responseDTO = new LoginResponseDTO();
+        responseDTO.setId(user.getId());
+        responseDTO.setName(user.getName());
+        responseDTO.setLastname(user.getLastname());
+        responseDTO.setEmail(user.getEmail());
+        responseDTO.setUsername(user.getUsername());
+        responseDTO.setPhoto(user.getPhoto());
+        responseDTO.setBio(user.getBio());
+
+        List<Long> publications = user.getPublications().stream()
+                .map(publication -> publication.getId())
+                .collect(Collectors.toList());
+
+        List<Long> followersIds = user.getFollowers().stream()
+                .map(follow -> follow.getFollowing().getId())
+                .collect(Collectors.toList());
+
+        List<Long> followingIds = user.getFollowing().stream()
+                .map(follow -> follow.getFollower().getId())
+                .collect(Collectors.toList());
+
+        responseDTO.setPublications(publications);
+        responseDTO.setFollowersIds(followersIds);
+        responseDTO.setFollowingIds(followingIds);
+
+        return ResponseEntity.ok(responseDTO);
     }
 }

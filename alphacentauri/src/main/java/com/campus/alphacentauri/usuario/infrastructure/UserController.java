@@ -46,32 +46,25 @@ public class UserController {
                 .collect(Collectors.toList());
     }
 
-    @PatchMapping(value = "/{userId}/photo", consumes = "application/json")
-    public ResponseEntity<?> updateUserPhoto(@PathVariable Long userId,
-                                             @RequestBody String photo) {
+    @PatchMapping(value = "/{userId}/photo", consumes = "text/plain")
+    public ResponseEntity<String> updateUserPhoto(@PathVariable Long userId, @RequestBody String photo) {
         try {
-            // Remove surrounding quotes if necessary (optional step)
-            photo = photo.replace("\"", "").trim();
-
             Optional<User> optionalUser = userRepository.findById(userId);
-            if (!optionalUser.isPresent()) {
+            if (optionalUser.isEmpty()) {
                 return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Usuario no encontrado");
             }
-            User user = optionalUser.get();
-            user.setPhoto(photo);  // Guardamos solo el string que representa la URL de la imagen
 
+            User user = optionalUser.get();
+            user.setPhoto(photo.trim()); // Guardamos solo el string limpio
             userRepository.save(user);
 
-            Map<String, Object> response = new HashMap<>();
-            response.put("id", user.getId());
-            response.put("photo", user.getPhoto());
-
-            return ResponseEntity.ok(response);
+            return ResponseEntity.ok(user.getPhoto()); // Retorna solo el string
         } catch (Exception ex) {
             ex.printStackTrace();
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Error al actualizar la foto");
         }
     }
+
 
 
 
